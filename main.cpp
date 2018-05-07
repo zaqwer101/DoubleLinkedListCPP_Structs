@@ -43,7 +43,7 @@ void Add(List *list, int value)
     list->size++;
 }
 
-Node* Get(List *list, int position)
+Node* GetById(List *list, int position)
 {
     Node *element = nullptr;
     Node *tmp  = list->first;
@@ -66,7 +66,7 @@ Node* Get(List *list, int position)
         return nullptr;
 }
 
-void Delete(List *list, int position)
+void DeleteById(List *list, int position)
 {
     // Если в списке нет элементов
     if(!list->first)
@@ -89,13 +89,14 @@ void Delete(List *list, int position)
         return;
     }
 
-    Node *elem = Get(list, position);
+    Node *elem = GetById(list, position);
     // Если удаляемый элемент - последний
     if(!elem->next)
     {
         list->last = elem->prev;
         list->last->next = nullptr;
         list->size--;
+        delete elem;
         return;
     }
 
@@ -105,6 +106,7 @@ void Delete(List *list, int position)
         list->first = elem->next;
         list->first->prev = nullptr;
         list->size--;
+        delete elem;
         return;
     }
 
@@ -114,6 +116,27 @@ void Delete(List *list, int position)
     list->size--;
 
     return;
+}
+
+void Delete(List *list, int value)
+{
+    Node *tmp = list->first;
+    int id = 0;
+
+    while(tmp->next != nullptr)
+    {
+        if(tmp->value == value)
+        {
+            DeleteById(list, id);
+            return;
+        }
+        id ++;
+        tmp = GetById(list, id);
+        if(tmp->next == nullptr) {
+            DeleteById(list, id);
+            return;
+        }
+    }
 }
 
 void Insert(List *list, int value, int position)
@@ -140,12 +163,17 @@ void Insert(List *list, int value, int position)
 
     if(position == (list->size - 1) || position == list->size)
     {
-        Add(list, value);
+        newNode->next = list->last;
+        newNode->prev = list->last->next;
+        list->last->prev->next = newNode;
+        list->last->prev = newNode;
+        list->size ++ ;
+
         return;
     }
 
-    Node *left  = Get(list, position - 1);
-    Node *right = Get(list, position);
+    Node *left  = GetById(list, position - 1);
+    Node *right = GetById(list, position);
 
     left->next = newNode;
     right->prev = newNode;
@@ -180,7 +208,9 @@ int main()
     Insert(a, 12, 0);
     Insert(a, 228, a->size);
     Insert(a, 229, a->size - 1);
-    Delete(a, 0);
+    DeleteById(a, 0);
+    Delete(a, 30);
+    Delete(a, 20);
 
     Print(a);
 }
