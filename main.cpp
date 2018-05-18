@@ -198,6 +198,25 @@ void Print(List *list)
     }
 }
 
+void Sort(List *list, bool x)
+{
+    Node *tmp = list->first;
+    Node *node1, *node2;
+
+    for(node1 = tmp; node1; node1 = node1->next)
+    {
+        for(node2 = tmp; node2; node2 = node2->next)
+        {
+            if((x&&(node1->value > node2->value)) || (!x&&(node1->value < node2->value)))
+            {
+                int xx = node1->value;
+                node1->value = node2->value;
+                node2->value = xx;
+            }
+        }
+    }
+}
+
 int main()
 {
     List* a = createList();
@@ -211,6 +230,8 @@ int main()
     DeleteById(a, 0);
     Delete(a, 30);
     Delete(a, 20);
-
+    Sort(a, 0);
+    Print(a);
+    Sort(a, 1);
     Print(a);
 }
